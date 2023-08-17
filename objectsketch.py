@@ -19,22 +19,40 @@ class endUser:
             self.currentMatchmakerID = offeringMatchmaker[matchmakerID]
             offeringMatchmaker.currentContracts.append(newContract)
             contractID += 1
-        
+            print("Bid accepted. New contract established.")
+        elif bidAccepted != "n":
+            print("Please enter 'y' or 'n'")
+        else:
+            print("No bid accepted")
 
+    def chargeCard(amount):
+        print("Charging $" + str(amount) + " to your card.")
 
 
 class Contract:
-    def __init__(self, contractID, dateEstablished, endUserID, matchmakerID, inviterID, monthlyCost, matchmakerCost, closingCost):
+    def __init__(self, contractID, dateEstablished, endUser, matchmakerID, inviterID, monthlyCost, matchmakerCost, closingCost):
         self.contractID = contractID
         self.dateEstablished = dateEstablished
-        self.endUserID = endUserID
+        self.endUser = endUser
         self.subscriberID = subscriberID
         self.matchmakerID = matchmakerID
         self.inviterID = inviterID
         self.monthlyCost = monthlyCost
         self.matchmakerCost = matchmakerCost
         self.closingCost = closingCost
-    
+
+    def monthlyPayment():
+        endUser.chargeCard(monthlyCost)
+        matchmakerID.receivePayment(monthlyCost * 0.85)
+        inviterID.receivePayment(monthlyCost * 0.05)
+
+    def monthlyMatchmakerCharge():
+        matchmakerID.chargeCard(matchmakerCost)
+
+    def getHitched():
+        endUser.chargeCard(closingCost)
+        matchmakerID.receivePayment(closingCost * 0.85)
+        inviterID.receivePayment(closingCost * 0.05)
 
 class Matchmaker:
     def __init__(self, matchmakerID, matchmakerName, passwordHash, creditHash, currentContracts):
@@ -44,7 +62,20 @@ class Matchmaker:
         self.creditHash = creditHash
         self.inviterID = inviterID
         self.currentContractID = currentContracts
+    
+    def chargeCard():
+        print("Charging $" + str(amount) + " to your card.")
 
     def offerBid(self, endUser, contractID, monthlyBid, matchmakerCost, closingBid):
-        endUser.weighBid(self.matchmakerID, monthlyBid, matchmakerCost, closingBid)
+        endUser.weighBid(self, monthlyBid, matchmakerCost, closingBid)
 
+    def bidOnExistingContract(existingContract, newMatchmakerBid):
+        if (newMatchmakerBid > existingContract[matchmakerCost]):
+            existingContract[matchmakerCost] = newMatchmakerBid
+            existingContract[matchmakerID] = self[matchmakerID]
+            print("Bid accepted. New contract established.")
+        else:
+            print("Bid rejected.")
+
+    def receivePayment(amount):
+        print(str(matchmakerID) + "receives $" + str(amount))
