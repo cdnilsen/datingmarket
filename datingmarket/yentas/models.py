@@ -8,6 +8,9 @@ def compareOrienders(alice, bob):
 def compareAges(alice, bob): # 8)
     return ((alice.age >= bob.minAge) and (alice.age <= bob.maxAge) and (bob.age >= alice.minAge) and (bob.age <= alice.maxAge))
 
+def compareLocations(alice, bob): # 9)
+    return (distance(alice.homeLatitude, alice.homeLongitude, bob.homeLatitude, bob.homeLongitude) < 100)
+
 class Trait(models.Model):
     idNum = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)
@@ -20,7 +23,6 @@ class EndUser(models.Model):
     username = models.CharField(max_length=200)
     hashedPassword = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
-    age = models.IntegerField(default=0)
     class Gender(models.IntergerChoices):
         MALE = 2
         FEMALE = 3
@@ -35,7 +37,12 @@ class EndUser(models.Model):
         MFNB = 30
     gender = models.integerField(choices=Gender.choices)
     orientation = models.integerField(choices=InterestedIn.choices)
+    
+    homeLatitude = models.DecimalField(max_digits = 9, decimal_places = 3)
+    homeLongitude = models.DecimalField(max_digits = 9, decimal_places = 3)
+    preferredDistance = models.IntegerField(default=100) # in...kilometers?
 
+    age = models.IntegerField(default=0)
     maxAge = models.IntegerField(default=20)
     minAge = models.IntegerField(default=20)
     hashedCreditCard = models.CharField(max_length=200)
