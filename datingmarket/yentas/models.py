@@ -8,13 +8,61 @@ def compareOrienders(alice, bob):
 def compareAges(alice, bob): # 8)
     return ((alice.age >= bob.minAge) and (alice.age <= bob.maxAge) and (bob.age >= alice.minAge) and (bob.age <= alice.maxAge))
 
-def compareLocations(alice, bob): # 9)
+def compareLocations(alice, bob):
     return (distance(alice.homeLatitude, alice.homeLongitude, bob.homeLatitude, bob.homeLongitude) < 100)
+
+class Demography(models.Model):
+    country = models.CharField(max_length=200, primary_key=True, default="USA") # Every country in the world belongs to America
+
+    populationM1824 = models.IntegerField(default=0)
+    populationM2534 = models.IntegerField(default=0)
+    populationM3544 = models.IntegerField(default=0)
+    populationM4554 = models.IntegerField(default=0)
+    populationM5564 = models.IntegerField(default=0)
+    populationM65 = models.IntegerField(default=0)
+
+    populationF1824 = models.IntegerField(default=0)
+    populationF2534 = models.IntegerField(default=0)
+    populationF3544 = models.IntegerField(default=0)
+    populationF4554 = models.IntegerField(default=0)
+    populationF5564 = models.IntegerField(default=0)
+    populationF65 = models.IntegerField(default=0)
+
+    populationNB1824 = models.IntegerField(default=0)
+    populationNB2534 = models.IntegerField(default=0)
+    populationNB3544 = models.IntegerField(default=0)
+    populationNB4554 = models.IntegerField(default=0)
+    populationNB5564 = models.IntegerField(default=0)
+    populationNB65 = models.IntegerField(default=0)
+    
+
 
 class Trait(models.Model):
     idNum = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
+
+    frequencyM1824 = models.IntegerField(default=0)
+    frequencyM2534 = models.IntegerField(default=0)
+    frequencyM3544 = models.IntegerField(default=0)
+    frequencyM4554 = models.IntegerField(default=0)
+    frequencyM5564 = models.IntegerField(default=0)
+    frequencyM65 = models.IntegerField(default=0)
+
+    frequencyF1824 = models.IntegerField(default=0)
+    frequencyF2534 = models.IntegerField(default=0)
+    frequencyF3544 = models.IntegerField(default=0)
+    frequencyF4554 = models.IntegerField(default=0)
+    frequencyF5564 = models.IntegerField(default=0)
+    frequencyF65 = models.IntegerField(default=0)
+
+    frequencyNB1824 = models.IntegerField(default=0)
+    frequencyNB2534 = models.IntegerField(default=0)
+    frequencyNB3544 = models.IntegerField(default=0)
+    frequencyNB4554 = models.IntegerField(default=0)
+    frequencyNB5564 = models.IntegerField(default=0)
+    frequencyNB65 = models.IntegerField(default=0)
+
     def __str__(self):
         return self.idNum
 
@@ -23,11 +71,11 @@ class EndUser(models.Model):
     username = models.CharField(max_length=200)
     hashedPassword = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
-    class Gender(models.IntergerChoices):
+    class Gender(models.IntegerChoices):
         MALE = 2
         FEMALE = 3
         NONBINARY = 5
-    class InterestedIn(models.IntergerChoices):
+    class InterestedIn(models.IntegerChoices):
         M = 2
         F = 3
         NB = 5
@@ -41,7 +89,9 @@ class EndUser(models.Model):
     homeLatitude = models.DecimalField(max_digits = 9, decimal_places = 3)
     homeLongitude = models.DecimalField(max_digits = 9, decimal_places = 3)
     preferredDistance = models.IntegerField(default=100) # in...kilometers?
+    country = models.CharField(max_length=200, primary_key=True, default="USA") # Every country in the world belongs to America
 
+    birthday = models.DateField()
     age = models.IntegerField(default=0)
     maxAge = models.IntegerField(default=20)
     minAge = models.IntegerField(default=20)
@@ -53,12 +103,6 @@ class EndUser(models.Model):
     activeContract = models.OneToOneField(Contract, on_delete=models.CASCADE)
     def __str__(self):
         return self.idNum
-
-
-
-
-
-
 
 class Matchmaker(models.Model):
     idNum = models.BigAutoField(primary_key=True)
@@ -87,6 +131,10 @@ class totalContractPayout(models.Manager):
     def getPayout(self, aliceContract, bobContract):
         totalPayout = aliceContract.matchmakerCut + bobContract.matchmakerCut
 
+
+class outstandingBids(models.Manager):
+    contractID = models.BigNumberField(primary_key=True) # Should be contract's ID number
+    clientID = models.BigNumberField(primary_key=True) # Should be client's ID number
 
 class Match(models.Manager):
 
