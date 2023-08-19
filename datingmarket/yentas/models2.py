@@ -4,15 +4,6 @@ from django.db import models
 
 # Create your models here.
 
-def compareOrienders(alice, bob):
-    return (((bob.orientation % alice.gender) == 0) and ((alice.orientation % bob.gender) == 0))
-
-def compareAges(alice, bob): # 8)
-    return ((alice.age >= bob.minAge) and (alice.age <= bob.maxAge) and (bob.age >= alice.minAge) and (bob.age <= alice.maxAge))
-
-def compareLocations(alice, bob):
-    return (distance(alice.homeLatitude, alice.homeLongitude, bob.homeLatitude, bob.homeLongitude) < 100)
-
 class Demography(models.Model):
     country = models.CharField(max_length=200, primary_key=True, default="USA") # Every country in the world belongs to America
 
@@ -85,12 +76,13 @@ class EndUser(models.Model):
         MNB = 10
         FNB = 15
         MFNB = 30
+
     gender = models.integerField(choices=Gender.choices)
     orientation = models.integerField(choices=InterestedIn.choices)
     
     homeLatitude = models.DecimalField(max_digits = 9, decimal_places = 3)
     homeLongitude = models.DecimalField(max_digits = 9, decimal_places = 3)
-    preferredDistance = models.IntegerField(default=100) # in...kilometers?
+    maxDistance = models.IntegerField(default=100) # in...kilometers?
     country = models.CharField(max_length=200, primary_key=True, default="USA") # Every country in the world belongs to America
 
     birthday = models.DateField()
@@ -98,11 +90,8 @@ class EndUser(models.Model):
     maxAge = models.IntegerField(default=20)
     minAge = models.IntegerField(default=20)
     hashedCreditCard = models.CharField(max_length=200)
-    dateMeDocs = models.string #the URL, presumably
+    dateMeDocs = models.CharField() #the URL where profile/date-me-docs are stored
 
-    originalMatchmaker = models.ForeignKey(Matchmaker, on_delete=models.CASCADE)
-
-    activeContract = models.OneToOneField(Contract, on_delete=models.CASCADE)
     def __str__(self):
         return self.idNum
 
@@ -115,6 +104,8 @@ class Matchmaker(models.Model):
     def __str__(self):
         return self.idNum
 
+
+# we're just gonna rewrite this one
 class Contract(models.Model):
     idNum = models.BigAutoField(primary_key=True)
     isActive = models.BooleanField(default=False)
