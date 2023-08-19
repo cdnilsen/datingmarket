@@ -77,6 +77,8 @@ class Bounty(models.Model):
     # Presumably the history of all bounties will be stored, so a client can have multiple associated bounties, but any bounty can have only one associated client
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
+    originalBidder = models.ForeignKey(Matchmaker, on_delete=models.CASCADE)
+
     # Validators may not work here but we'll see
     bountyCost = models.decimalField(max_digits = 5, decimal_places = 2, default = 2.50, validators=[
             MaxValueValidator(999.99),
@@ -84,8 +86,9 @@ class Bounty(models.Model):
         ])
     
     #make sure this is UTC/absolute time
-    #Expiration date rather than 'X a week' because people can (maybe?) only ever have one active bounty out.
-    # or rather, maybe they don't. obviously bounties need an expiration date whether those are user-chosen or by fiat
+
+    #Expiration date is still probably at the same time every week because the back-market needs to close at the same time on all possible matches. Not sure what we do for multiple time zones: perhaps 1 AM Pacific/4 AM Eastern on (Sunday? Monday? morning)
+
     bountyPostDate = models.DateTimeField()
     bountyExpirationDate = models.DateTimeField()
 
@@ -112,7 +115,41 @@ class Bounty(models.Model):
         MinValueValidator(0.01)
         ])
 
+    def __str__(self):
+        return self.username
+
+class Match(models.Model):
+    alice = models.ForeignKey(Client, on_delete=models.CASCADE)
+    bob = models.ForeignKey(Client, on_delete=models.CASCADE)
+
+    # This is a one-to-many relationship: there may be multiple bids out for (Alice, Bob), (Alice, Charlie), (Alice, Dave), but Alice's bounty is the same for all of those
+    aliceBounty = models.ForeignKey(Bounty, on_delete=models.CASCADE)
+    bobBounty = models.ForeignKey(Bounty, on_delete=models.CASCADE)
+
+    # Auctions should be normal English (i.e. open bid, highest bid wins) as that's apparently equivalent to a sealed Vickrey, wrt the expected revenue to the auctioneer and the amount paid by the bidder.
+    currentTopBid = models.decimalField(max_digits = 5, decimal_places = 2, default = 0.01)
+
+    # Bids should be public. Bidders should be hidden to other bidders, however, because otherwise the value in a good matchmaking model is lost (bad MMs will just see that a top-5 MM bid $5 and will then bid $5.01).
+    currentTopBidder = models.ForeignKey(Matchmaker, on_delete=models.CASCADE)
+
     
+    
+
+
+
+class Matchmaker(models.Model):
+
+    idNum = models.BigAutoField(primary_key=True)
+    username = models.CharField(max_length=200)
+    hashedPassword = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
+    hashedCreditCard = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.username
+
+
+
 
 
 
