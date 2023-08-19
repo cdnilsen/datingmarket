@@ -100,7 +100,6 @@ class Matchmaker(models.Model):
     username = models.CharField(max_length=200)
     hashedPassword = models.CharField(max_length=200)
     email = models.CharField(max_length=200)
-
     def __str__(self):
         return self.idNum
 
@@ -123,7 +122,6 @@ class Contract(models.Model):
 class totalContractPayout(models.Manager):
     def getPayout(self, aliceContract, bobContract):
         totalPayout = aliceContract.matchmakerCut + bobContract.matchmakerCut
-
 
 class outstandingBid(models.Manager):
     contractID = models.BigNumberField(primary_key=True) # Should be contract's ID number

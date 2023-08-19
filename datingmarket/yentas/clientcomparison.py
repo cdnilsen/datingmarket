@@ -1,6 +1,5 @@
 from django.db import models
 
-
 # Genders are assigned prime numbers, and orientations are assigned composite numbers
 def compareOrienders(alice, bob):
     return (((bob.orientation % alice.gender) == 0) and ((alice.orientation % bob.gender) == 0))
