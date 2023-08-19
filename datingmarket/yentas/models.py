@@ -94,6 +94,23 @@ class Bounty(models.Model):
         MinValueValidator(0.01)
         ]) # Default should be low, 5-10%, and not messed with unless there is good reason to, the value validators are just for sanity checking
 
+    successfulMMCut = models.decimalField(max_digits = 3, decimal_places = 2, default = 0.80, validators=[
+        MaxValueValidator(0.99),
+        MinValueValidator(0.01)
+        ])
+
+    # Cuts to inviters and cuts to the site from the bounties themselves (rather than back-market bids) are not yet final but they're placed here for now
+    # If we cut em, the defaults all have to add up to 1.00
+
+    inviterCut = models.decimalField(max_digits = 3, decimal_places = 2, default = 0.05, validators=[
+        MaxValueValidator(0.99),
+        MinValueValidator(0.01)
+        ])
+
+    siteCut = models.decimalField(max_digits = 3, decimal_places = 2, default = 0.05, validators=[
+        MaxValueValidator(0.99),
+        MinValueValidator(0.01)
+        ])
 
     
 
