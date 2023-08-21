@@ -41,12 +41,12 @@ class Client(models.Model):
     orientation = models.IntegerField(choices= INTERESTED_IN)
     country = models.CharField(max_length=200, default="USA")
     birth = models.DateTimeField()
-    # manager will calculate from the birthday passed in 
+    # manager will calculate user's age from the birthday passed in 
     age = models.IntegerField(default = 18, validators=[MaxValueValidator(100), MinValueValidator(18)])
     minAge = models.IntegerField(default = 18, validators=[MaxValueValidator(100), MinValueValidator(18)])
     maxAge = models.IntegerField(default = 100, validators=[MaxValueValidator(100), MinValueValidator(18)])
 
-
+    
 
 class Matchmaker(models.Model):
     user = models.OneToOneField(User, on_delete= models.CASCADE, primary_key=True)
