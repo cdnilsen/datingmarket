@@ -39,8 +39,14 @@ class Client(models.Model):
     gender = models.IntegerField(choices=GENDER)
     orientation = models.IntegerField(choices= INTERESTED_IN)
 
+
     country = models.CharField(max_length=200, default="USA")
 
+
+class Matchmaker(models.Model):
+    user = models.OneToOneField(User, on_delete= models.CASCADE, primary_key=True)
+
+    country = models.CharField(max_length=200, default="USA")
 
 '''
 class Matchmaker(models.Model):
