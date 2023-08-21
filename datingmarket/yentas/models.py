@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from birthday import BirthdayField, BirthdayManager
+
 # from dateutil.relativedelta import relativedelta
 
 # Imports client-to-client comparison algorithms
@@ -18,7 +19,7 @@ from birthday import BirthdayField, BirthdayManager
 
 
 class Client(models.Model):
-    user = models.OneToOneField(User, on_delete= models.CASCADE)
+    user = models.OneToOneField(User, on_delete= models.CASCADE, primary_key=True)
     GENDER = [
         (2, "MALE"),
         (3, "FEMALE"),
@@ -38,6 +39,7 @@ class Client(models.Model):
     gender = models.IntegerField(choices=GENDER)
     orientation = models.IntegerField(choices= INTERESTED_IN)
 
+    country = models.CharField(max_length=200, default="USA")
 
 
 '''
