@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 # Genders are assigned prime numbers, and orientations are assigned composite numbers
 # compareOrienders works, at least in shell
@@ -7,6 +8,10 @@ def compareOrienders(alice, bob):
     
 def compareAges(alice, bob):
     return ((alice.age >= bob.minAge) and (alice.age <= bob.maxAge) and (bob.age >= alice.minAge) and (bob.age <= alice.maxAge))
+
+def calculateAge(born):
+    today = date.today()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
 # Will require fiddling with coordinates and map APIs ktl.
 

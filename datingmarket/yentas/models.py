@@ -4,10 +4,11 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 import datetime
+from datetime import date
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from birthday import BirthdayField, BirthdayManager
+from yentas.clientcomparison import calculateAge
 
 # from dateutil.relativedelta import relativedelta
 
@@ -38,9 +39,13 @@ class Client(models.Model):
     # When creating Clients in shell, it is possible to give them a gender outside the choices, e.g. 7. Deal with this later
     gender = models.IntegerField(choices=GENDER)
     orientation = models.IntegerField(choices= INTERESTED_IN)
-
-
     country = models.CharField(max_length=200, default="USA")
+    birth = models.DateTimeField()
+    # manager will calculate from the birthday passed in 
+    age = models.IntegerField(default = 18, validators=[MaxValueValidator(100), MinValueValidator(18)])
+    minAge = models.IntegerField(default = 18, validators=[MaxValueValidator(100), MinValueValidator(18)])
+    maxAge = models.IntegerField(default = 100, validators=[MaxValueValidator(100), MinValueValidator(18)])
+
 
 
 class Matchmaker(models.Model):
