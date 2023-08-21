@@ -1,5 +1,3 @@
-# THIS IS AN OLD VERSION THAT IS BEING REFACTORED. DO NOT USE THIS VERSION.
-
 from django.db import models
 
 # Create your models here.

@@ -2,21 +2,59 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
-USER = get_user_model()
+
 import datetime
+from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from birthday import BirthdayField, BirthdayManager
+# from dateutil.relativedelta import relativedelta
 
 # Imports client-to-client comparison algorithms
 # from .clientcomparison import *
 
-class User(models.Model):
-    idNum = models.BigAutoField(primary_key=True)
-    username = models.CharField(max_length=200)
-    hashedPassword = models.CharField(max_length=200)
-    email = models.CharField(max_length=200)
-    hashedCreditCard = models.CharField(max_length=200)
+# Built-in User model already has a username, PW, email, first name, last name, date joined, last login, is_superuser, is_active, is_staff, groups (many-to-many), user_permissions (many-to-many)
+
+
+
+class Client(models.Model):
+    user = models.OneToOneField(User, on_delete= models.CASCADE)
+    GENDER = [
+        (2, "MALE"),
+        (3, "FEMALE"),
+        (5, "NONBINARY"),
+    ]
+    INTERESTED_IN = [
+        (2, "M"),
+        (3, "F"),
+        (5, "NB"),
+        (6, "MF"),
+        (10, "MNB"),
+        (15, "FNB"),
+        (30, "MFNB"),
+    ]
+
+    # When creating Clients in shell, it is possible to give them a gender outside the choices, e.g. 7. Deal with this later
+    gender = models.IntegerField(choices=GENDER)
+    orientation = models.IntegerField(choices= INTERESTED_IN)
+
+
+
+'''
+class Matchmaker(models.Model):
+    user = models.OneToOneField(User, on_delete= models.CASCADE)
+'''
+
+'''
+class SiteUser(models.Model):
+    user = models.OneToOneField(User, on_delete= models.CASCADE)
     
-    # All matchmakers, as well as clients, should probably be over 18
-    birthday = models.DateField()
+    hashedCreditCard = models.CharField(max_length=200)
+    birthday = BirthdayField()
+
+    @property 
+    def age(self):
+        return datetime.(datetime.date.today() - self.birthday).years
 
     # Every country in the world belongs to America
     # Necessary for matchmakers as well due to finance regs
@@ -54,7 +92,7 @@ class Demography(models.Model):
     def __str__(self):
         return self.country
 
-class Client(User):
+class Client(SiteUser):
     user = models.ForeignKey(USER, on_delete=models.CASCADE)
     age = models.IntegerField(default = 18)
     # DO NOT MESS with the numbers are here. Server uses prime factorization to determine oriender compatibility
@@ -79,14 +117,9 @@ class Client(User):
     homeLatitude = models.DecimalField(max_digits = 9, decimal_places = 3)
     homeLongitude = models.DecimalField(max_digits = 9, decimal_places = 3)
     maxDistance = models.IntegerField(default = 100) # Input can be in miles but we will change to kilometers for production code
-    '''
-    @property 
-    def age(self):
-        return (datetime.date.today() - self.birthday).years
 
     minAge = models.IntegerField(default = round((age / 2) + 7))
     maxAge = models.IntegerField(default = (age - 7) * 2)
-    '''
 
     dateMeDocs = models.CharField() #the URL where the date-me-docs are stored
     # 'where the date-me-docs are stored' demands a BHotR pun in production code
@@ -189,6 +222,8 @@ class Match(models.Model):
 
     def __str__(self):
         return self.idNum
+
+'''
 
 
 
